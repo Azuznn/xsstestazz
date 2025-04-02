@@ -165,7 +165,25 @@ def index():
         if raw is not None and raw.strip() != '':
             submitted = True
             user_input = raw
-            rendered_input = q['template'].format(user_input)
+
+            if q.get('filter_script') and '<script' in user_input.lower():
+                error_message = 'script タグは禁止されています。WAF回避を試みてください。'
+                rendered_input = ''
+            elif q.get('blocked_keywords') and is_blocked(user_input, q['blocked_keywords']):
+                error_message = '指定された文字列がブロックされています。回避手法を試してください。'
+                rendered_input = ''
+            elif q['id'] == 4:
+                 rendered_input = q['template'].format(sanitize_for_event_attr(user_input))
+            elif q['id'] == 6:
+                  rendered_input = q['template'].format(sanitize_html_tags(user_input, q['allowed_tags']))
+            else:
+                if q.get('sanitize_single_quote'):
+                    user_input = user_input.replace("'", "&#39;")
+                    user_input = user_input.replace('"', "&quot;")
+                    
+                rendered_input = q['template'].format(user_input) if q['vulnerable'] else q['template'].format(escape(user_input))
+
+
 
     if request.method == 'POST':
         user_answer = request.form.get('answer', '')
@@ -191,6 +209,7 @@ def index():
         <button type="submit">次へ</button>
     </form>
     '''
+
     return render_template_string(html)
 
 @app.route('/results')
