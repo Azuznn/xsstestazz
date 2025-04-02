@@ -8,8 +8,8 @@ app.secret_key = 'dev'
 questions = [
     {
         'id': 1,
-        'title': 'シンプルなXSS（属性内）',
-        'description': '反射値がHTML属性内に入り込むケース。XSSが発生するか確認せよ。',
+        'title': 'Simple XSS',
+        'description': '反射値がHTML属性内に入り込むケース。',
         'template': '<input name="q" value="{}">',
         'vulnerable': True,
         'context': 'attribute',
@@ -17,8 +17,8 @@ questions = [
     },
     {
         'id': 2,
-        'title': 'script タグが使えないケース（タグ内挿入）',
-        'description': 'script タグが使えない前提で XSS を試みよ。',
+        'title': 'scriptタグが使えないケース',
+        'description': '禁則文字:script ',
         'template': '{}',
         'vulnerable': True,
         'context': 'html',
@@ -26,8 +26,8 @@ questions = [
     },
     {
         'id': 3,
-        'title': 'JSコンテキスト内での反射',
-        'description': 'JavaScriptの文字列内に入力が埋め込まれるケース。',
+        'title': 'Script内に反射するケース 1',
+        'description': '禁則文字: >',
         'template': '<script>var msg = "{}";</script>',
         'vulnerable': True,
         'context': 'js_string',
@@ -36,8 +36,8 @@ questions = [
     },
     {
         'id': 4,
-        'title': 'イベント属性（" が使用できない）',
-        'description': 'onmouseover属性などに挿入されるケース。ただし " は使用できない。',
+        'title': 'イベント属性に反射するケース（" が使用できない）1',
+        'description': '禁則文字: "',
         'template': '<div onmouseover={}>カーソルを当ててみてください</div>',
         'vulnerable': True,
         'context': 'event_attr',
@@ -45,8 +45,8 @@ questions = [
     },
     {
         'id': 5,
-        'title': 'JSON風データをJSに埋め込むケース（XSS可）',
-        'description': 'JSON風データがJavaScript内に埋め込まれる。スクリプト実行可能性を探れ。',
+        'title': 'Script内に反射するケース 2',
+        'description': '禁則文字:> <',
         'template': '<script>var json = {{"status": "ok", "data": "{}"}};</script>',
         'vulnerable': True,
         'context': 'js_injection',
@@ -55,8 +55,8 @@ questions = [
     },
     {
         'id': 6,
-        'title': 'WAF回避・iframeのみ許可',
-        'description': 'iframeタグのみ挿入可能。他のタグは除外される。',
+        'title': 'iframeタグのみ許可されている状態',
+        'description': '禁則文字: iframe以外のタグ',
         'template': '{}',
         'vulnerable': True,
         'context': 'html_strict',
@@ -66,27 +66,27 @@ questions = [
     {
         'id': 7,
         'title': 'scriptもalertも使えないケース',
-        'description': 'scriptタグおよびalertという文字列も使用できない状況下でXSSを試みよ。',
+        'description': '禁則文字:script alert > <',
         'template': '{}',
         'vulnerable': True,
         'context': 'html_strict',
         'filter_script': True,
-        'blocked_keywords': ['<script', 'alert']
+        'blocked_keywords': ['script', 'alert','>','<']
     },
     {
         'id': 8,
-        'title': 'prompt/console.log も使えない XSS回避パターン',
-        'description': 'script, alert に加えて prompt, console.log, confirm, eval, function も禁止された環境でXSSを実行せよ。',
+        'title': 'promptやconfirm,console.log も使えないケース',
+        'description': '禁則文字:script prompt confirm eval function',
         'template': '{}',
         'vulnerable': True,
         'context': 'html_strict',
         'filter_script': True,
-        'blocked_keywords': ['<script', 'alert', 'prompt', 'console.log', 'confirm', 'eval', 'function']
+        'blocked_keywords': ['script', 'alert', 'prompt', 'console.log', 'confirm', 'eval', 'function']
     },
     {
         'id': 9,
-        'title': 'イベント属性内・複雑構文・"使用不可',
-        'description': '既にonmouseover内に様々なJavaScriptコードが書かれており、" は使用できない。;alert(1); のように注入せよ。',
+        'title': 'イベント属性に反射するケース（" が使用できない）2',
+        'description': '禁則文字:" >',
         'template': '<div onmouseover="console.log(1);{};doSomething()">ホバーしてみて</div>',
         'vulnerable': True,
         'context': 'event_handler_complex',
@@ -96,7 +96,7 @@ questions = [
     {
         'id': 10,
         'title': 'XSSが無効なハンドラ内に反射→イベント属性への脱出型XSS',
-        'description': 'JavaScriptのイベントハンドラ中の文字列として反射されるが、構文上そのままではXSSは発生しない。\' で脱出して onmouseover=... を追加し、イベント属性ベースでのXSSを実行せよ。ただし alert は使用禁止。',
+        'description': '禁則文字:alert " >',
         'template': "<a href='#' onclick='logClick('{}')'>リンク</a>",
         'vulnerable': True,
         'context': 'attr_escape_escape',
@@ -105,8 +105,8 @@ questions = [
     },
     {
         'id': 11,
-        'title': 'eval(atob(...)) 経由でのスクリプト実行 (alert/prompt/confirm禁止)',
-        'description': 'scriptタグ内に反射されるが、evalからしか開始できず、alert/prompt/confirmは禁止されている。Base64でコードを埋め込み、eval → atob の流れで実行を試みよ。禁則文字:alert prompt confirm> <',
+        'title': 'eval経由でのスクリプト実行 (alert/prompt/confirm禁止)',
+        'description': '禁則文字: alert prompt confirm > < \\',
         'template': '<script>{}</script>',
         'vulnerable': True,
         'context': 'script_eval_b64',
@@ -115,8 +115,8 @@ questions = [
     },
     {
         'id': 12,
-        'title': "'で囲まれたonmouseover属性内反射（'は&#39;にサニタイズ）",
-        'description': "onmouseover属性内にシングルクォートで囲まれた文字列として反射される。ユーザー入力の' は &#39; に変換されるが、それでも発火する構文を構築せよ。禁則文字:alert prompt confirm > <",
+        'title': "onmouseover属性内反射",
+        'description': "禁則文字: alert prompt confirm > <",
         'template': '<div onmouseover="console.log(\'1{} \');">ホバーしてみて</div>',
         'vulnerable': True,
         'context': 'event_attr_quote_entity',
@@ -150,6 +150,12 @@ def index():
         session['answers'] = []
         session['question_index'] = 0
 
+    goto_index = request.args.get('goto')
+    if goto_index is not None and goto_index.isdigit():
+        idx = int(goto_index)
+        if 0 <= idx < len(questions):
+            session['question_index'] = idx
+
     q = get_current_question()
     if not q:
         return redirect(url_for('results'))
@@ -173,25 +179,27 @@ def index():
                 error_message = '指定された文字列がブロックされています。回避手法を試してください。'
                 rendered_input = ''
             elif q['id'] == 4:
-                 rendered_input = q['template'].format(sanitize_for_event_attr(user_input))
+                rendered_input = q['template'].format(sanitize_for_event_attr(user_input))
             elif q['id'] == 6:
-                  rendered_input = q['template'].format(sanitize_html_tags(user_input, q['allowed_tags']))
+                rendered_input = q['template'].format(sanitize_html_tags(user_input, q['allowed_tags']))
             else:
                 if q.get('sanitize_single_quote'):
                     user_input = user_input.replace("'", "&#39;")
-                    user_input = user_input.replace('"', "&quot;")
-                    
                 rendered_input = q['template'].format(user_input) if q['vulnerable'] else q['template'].format(escape(user_input))
 
-
-
     if request.method == 'POST':
-        user_answer = request.form.get('answer', '')
-        session['answers'].append(user_answer)
-        session['question_index'] += 1
+        if 'prev' in request.form:
+            session['question_index'] = max(session['question_index'] - 1, 0)
+        else:
+            user_answer = request.form.get('answer', '')
+            session['answers'].append(user_answer)
+            session['question_index'] += 1
         return redirect(url_for('index'))
 
+    nav_links = ' | '.join([f'<a href="?goto={q["id"]-1}">問題 {q["id"]}</a>' for q in questions])
+
     html = f'''
+    <nav style="margin-bottom:20px">{nav_links}</nav>
     <h1>問題 {q['id']}：{q['title']}</h1>
     <p>{q['description']}</p>
     <form method="get">
@@ -206,7 +214,7 @@ def index():
     <form method="post">
         <label>回答案:</label>
         <input type="text" name="answer" style="z-index:999; position:relative;">
-        <button type="submit">次へ</button>
+        <button type="submit" name="next">次へ</button>
     </form>
     '''
 
