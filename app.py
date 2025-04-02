@@ -36,7 +36,7 @@ questions = [
     },
     {
         'id': 4,
-        'title': 'イベント属性に反射するケース（" が使用できない）1',
+        'title': 'イベント属性に反射するケース1',
         'description': '禁則文字: "',
         'template': '<div onmouseover={}>カーソルを当ててみてください</div>',
         'vulnerable': True,
@@ -66,12 +66,12 @@ questions = [
     {
         'id': 7,
         'title': 'scriptもalertも使えないケース',
-        'description': '禁則文字:script alert > <',
+        'description': '禁則文字:script alert',
         'template': '{}',
         'vulnerable': True,
         'context': 'html_strict',
         'filter_script': True,
-        'blocked_keywords': ['script', 'alert','>','<']
+        'blocked_keywords': ['script', 'alert']
     },
     {
         'id': 8,
@@ -85,7 +85,7 @@ questions = [
     },
     {
         'id': 9,
-        'title': 'イベント属性に反射するケース（" が使用できない）2',
+        'title': 'イベント属性に反射するケース2',
         'description': '禁則文字:" >',
         'template': '<div onmouseover="console.log(1);{};doSomething()">ホバーしてみて</div>',
         'vulnerable': True,
@@ -95,7 +95,7 @@ questions = [
     },
     {
         'id': 10,
-        'title': 'XSSが無効なハンドラ内に反射→イベント属性への脱出型XSS',
+        'title': 'イベント属性に反射するケース3',
         'description': '禁則文字:alert " >',
         'template': "<a href='#' onclick='logClick('{}')'>リンク</a>",
         'vulnerable': True,
