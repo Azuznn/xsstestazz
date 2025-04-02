@@ -14,8 +14,116 @@ questions = [
         'vulnerable': True,
         'context': 'attribute',
         'filter_script': False
+    },
+    {
+        'id': 2,
+        'title': 'script タグが使えないケース（タグ内挿入）',
+        'description': 'script タグが使えない前提で XSS を試みよ。',
+        'template': '{}',
+        'vulnerable': True,
+        'context': 'html',
+        'filter_script': True
+    },
+    {
+        'id': 3,
+        'title': 'JSコンテキスト内での反射',
+        'description': 'JavaScriptの文字列内に入力が埋め込まれるケース。',
+        'template': '<script>var msg = "{}";</script>',
+        'vulnerable': True,
+        'context': 'js_string',
+        'filter_script': False,
+        'blocked_keywords': ['>']
+    },
+    {
+        'id': 4,
+        'title': 'イベント属性（" が使用できない）',
+        'description': 'onmouseover属性などに挿入されるケース。ただし " は使用できない。',
+        'template': '<div onmouseover={}>カーソルを当ててみてください</div>',
+        'vulnerable': True,
+        'context': 'event_attr',
+        'filter_script': True
+    },
+    {
+        'id': 5,
+        'title': 'JSON風データをJSに埋め込むケース（XSS可）',
+        'description': 'JSON風データがJavaScript内に埋め込まれる。スクリプト実行可能性を探れ。',
+        'template': '<script>var json = {{"status": "ok", "data": "{}"}};</script>',
+        'vulnerable': True,
+        'context': 'js_injection',
+        'filter_script': False,
+        'blocked_keywords': ['>','<']
+    },
+    {
+        'id': 6,
+        'title': 'WAF回避・iframeのみ許可',
+        'description': 'iframeタグのみ挿入可能。他のタグは除外される。',
+        'template': '{}',
+        'vulnerable': True,
+        'context': 'html_strict',
+        'filter_script': True,
+        'allowed_tags': ['iframe']
+    },
+    {
+        'id': 7,
+        'title': 'scriptもalertも使えないケース',
+        'description': 'scriptタグおよびalertという文字列も使用できない状況下でXSSを試みよ。',
+        'template': '{}',
+        'vulnerable': True,
+        'context': 'html_strict',
+        'filter_script': True,
+        'blocked_keywords': ['<script', 'alert']
+    },
+    {
+        'id': 8,
+        'title': 'prompt/console.log も使えない XSS回避パターン',
+        'description': 'script, alert に加えて prompt, console.log, confirm, eval, function も禁止された環境でXSSを実行せよ。',
+        'template': '{}',
+        'vulnerable': True,
+        'context': 'html_strict',
+        'filter_script': True,
+        'blocked_keywords': ['<script', 'alert', 'prompt', 'console.log', 'confirm', 'eval', 'function']
+    },
+    {
+        'id': 9,
+        'title': 'イベント属性内・複雑構文・"使用不可',
+        'description': '既にonmouseover内に様々なJavaScriptコードが書かれており、" は使用できない。;alert(1); のように注入せよ。',
+        'template': '<div onmouseover="console.log(1);{};doSomething()">ホバーしてみて</div>',
+        'vulnerable': True,
+        'context': 'event_handler_complex',
+        'filter_script': True,
+        'blocked_keywords': ['"','>']
+    },
+    {
+        'id': 10,
+        'title': 'XSSが無効なハンドラ内に反射→イベント属性への脱出型XSS',
+        'description': 'JavaScriptのイベントハンドラ中の文字列として反射されるが、構文上そのままではXSSは発生しない。\' で脱出して onmouseover=... を追加し、イベント属性ベースでのXSSを実行せよ。ただし alert は使用禁止。',
+        'template': "<a href='#' onclick='logClick('{}')'>リンク</a>",
+        'vulnerable': True,
+        'context': 'attr_escape_escape',
+        'filter_script': True,
+        'blocked_keywords': ['alert','"','>']
+    },
+    {
+        'id': 11,
+        'title': 'eval(atob(...)) 経由でのスクリプト実行 (alert/prompt/confirm禁止)',
+        'description': 'scriptタグ内に反射されるが、evalからしか開始できず、alert/prompt/confirmは禁止されている。Base64でコードを埋め込み、eval → atob の流れで実行を試みよ。禁則文字:alert prompt confirm> <',
+        'template': '<script>{}</script>',
+        'vulnerable': True,
+        'context': 'script_eval_b64',
+        'filter_script': True,
+        'blocked_keywords': ['alert', 'prompt', 'confirm','<','>','\\']
+    },
+    {
+        'id': 12,
+        'title': "'で囲まれたonmouseover属性内反射（'は&#39;にサニタイズ）",
+        'description': "onmouseover属性内にシングルクォートで囲まれた文字列として反射される。ユーザー入力の' は &#39; に変換されるが、それでも発火する構文を構築せよ。禁則文字:alert prompt confirm > <",
+        'template': '<div onmouseover="console.log(\'1{} \');">ホバーしてみて</div>',
+        'vulnerable': True,
+        'context': 'event_attr_quote_entity',
+        'filter_script': True,
+        'sanitize_single_quote': True,
+        'blocked_keywords': ['alert', 'prompt', 'confirm','<','>']
     }
-    # ...（他の問題も追加可能）
 ]
 
 def sanitize_for_event_attr(value):
@@ -94,4 +202,4 @@ def results():
     return html
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=10000)
