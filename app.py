@@ -123,6 +123,26 @@ questions = [
         'filter_script': True,
         'sanitize_single_quote': True,
         'blocked_keywords': ['alert', 'prompt', 'confirm','<','>']
+    },
+    {
+    'id': 13,
+    'title': 'href属性内反射',
+    'description': '禁則文字: ">, alert, script',
+    'template': '<a href="{}">クリック</a>',
+    'vulnerable': True,
+    'context': 'a_href_attr',
+    'filter_script': True,
+    'blocked_keywords': ['"', '>', 'alert', 'script','\\','prompt','console','confirm']
+    },
+    {
+    'id': 14,
+    'title': 'スペースのスペースが・・？',
+    'description': '禁則文字: %20(space) / script ',
+    'template': '{}',
+    'vulnerable': True,
+    'context': 'html_strict_space_blocked',
+    'filter_script': True,
+    'blocked_keywords': [' ', '/', 'script', 'svg', 'onload']
     }
 ]
 
