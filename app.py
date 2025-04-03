@@ -143,6 +143,26 @@ questions = [
     'context': 'html_strict_space_blocked',
     'filter_script': True,
     'blocked_keywords': [' ', '/', 'script', 'svg', 'onload']
+    },
+    {
+  "id": 15,
+  "title": "JSON.parse 1",
+  "description": "禁則文字:script > <",
+  "template": "<script>$(function(){{ var data = $.parseJSON('{{\"1\":{{\"value\":\"{}\"}}}}'); }});</script>",
+  "vulnerable": True,
+  "context": "js_json_parse",
+  "filter_script": True,
+  "blocked_keywords": ["script", "<", ">"]
+    },
+    {
+  "id": 16,
+  "title": "JSON.parse 2",
+  "description": "禁則文字:script > < \" ",
+  "template": "<script>$(function(){{ var data = $.parseJSON('{{\"1\":{{\"value\":\"{}\"}}}}'); }});</script>",
+  "vulnerable": True,
+  "context": "js_json_parse",
+  "filter_script": True,
+  "blocked_keywords": ["script", "<", ">","\""]
     }
 ]
 
@@ -219,6 +239,9 @@ def index():
     nav_links = ' | '.join([f'<a href="?goto={q["id"]-1}">問題 {q["id"]}</a>' for q in questions])
 
     html = f'''
+     <head>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
     <nav style="margin-bottom:20px">{nav_links}</nav>
     <h1>問題 {q['id']}：{q['title']}</h1>
     <p>{q['description']}</p>
