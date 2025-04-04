@@ -163,6 +163,17 @@ questions = [
   "context": "js_json_parse",
   "filter_script": True,
   "blocked_keywords": ["script", "<", ">","\""]
+    },
+    {
+        'id': 17,
+        'title': '全て大文字に変換されるケース',
+        'description': '禁則文字: script eval { ]',
+        'template': '<div>{}</div>',
+        'vulnerable': True,
+        'context': 'uppercase_only',
+        'filter_script': True,
+        'force_uppercase': True,
+        'blocked_keywords': ['SCRIPT', 'EVAL','script']
     }
 ]
 
@@ -212,6 +223,8 @@ def index():
             submitted = True
             user_input = raw
 
+            if q.get('force_uppercase'):
+                user_input = user_input.upper()
             if q.get('filter_script') and '<script' in user_input.lower():
                 error_message = 'script タグは禁止されています。WAF回避を試みてください。'
                 rendered_input = ''
