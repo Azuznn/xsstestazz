@@ -174,7 +174,37 @@ questions = [
         'filter_script': True,
         'force_uppercase': True,
         'blocked_keywords': ['SCRIPT', 'EVAL','script']
-    }
+    },
+        {
+        'id': 18,
+        'title': 'ブラウザの機能',
+        'description': '禁則文字: > ¥ java script alert prompt confirm console.log',
+        'template': '{}',
+        'vulnerable': True,
+        'context': 'html_autoclose_iframe',
+        'filter_script': True,
+        'blocked_keywords': ['>', '¥', 'java', 'script', 'alert', 'prompt', 'confirm', 'console.log']
+    },
+    {
+        'id': 19,
+        'title': '() `` が使えません',
+        'description': '禁則文字: t( m( g( t` m` g`',
+        'template': '{}',
+        'vulnerable': True,
+        'context': 'html_img_onerror_call',
+        'filter_script': True,
+        'blocked_keywords': ['t(', 'm(', 'g(', 't`', 'm`', 'g`']
+    },
+    {
+    'id': 20,
+    'title': '括弧が使えないケース',
+    'description': '禁則文字: ( )',
+    'template': '<div>{}</div>',
+    'vulnerable': True,
+    'context': 'no_parentheses',
+    'filter_script': True,
+    'blocked_keywords': ['(', ')','`']
+}
 ]
 
 def sanitize_for_event_attr(value):
