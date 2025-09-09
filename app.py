@@ -183,11 +183,11 @@ questions = [
         'vulnerable': True,
         'context': 'html_autoclose_iframe',
         'filter_script': True,
-        'blocked_keywords': ['>', '¥', 'java', 'script', 'alert', 'prompt', 'confirm', 'console.log']
+        'blocked_keywords': ['>', '¥', 'java', 'script', 'alert', 'prompt', 'confirm', 'console.log','\']
     },
     {
         'id': 19,
-        'title': '() `` が使えません',
+        'title': 'method 1',
         'description': '禁則文字: t( m( g( t` m` g`',
         'template': '{}',
         'vulnerable': True,
@@ -197,7 +197,7 @@ questions = [
     },
     {
     'id': 20,
-    'title': '括弧が使えないケース',
+    'title': '括弧とバッククォーテーションが使えないケース',
     'description': '禁則文字: ( )',
     'template': '<div>{}</div>',
     'vulnerable': True,
