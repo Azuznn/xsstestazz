@@ -204,7 +204,22 @@ questions = [
     'context': 'no_parentheses',
     'filter_script': True,
     'blocked_keywords': ['(', ')','`']
+},
+    {
+    'id': 21,  
+    'title': 'クォート2種 + ) 必須で脱出',
+    'description': '反射箇所は1箇所。抜け出すには " と \' と ) の3つすべてが必要になる。',
+    'template': '<svg><script>\n'
+                '  function test(){\n'
+                '    var a = "{}";   // ←ここに反射\n'
+                '  }\n'
+                '</script></svg>',
+    'vulnerable': True,
+    'context': 'single_reflect_triple_escape',
+    'filter_script': True,
+    'sanitize_single_quote': True
 }
+
 ]
 
 def sanitize_for_event_attr(value):
