@@ -209,7 +209,7 @@ questions = [
     'id': 21,  
     'title': '外部名前空間',
     'description': '外部名前空間とは。',
-    'template': '<svg><script>$(function(){{ var data = $.parseJSON('{{\"1\":{{\"value\":\"{}\"}}}}'); }});</script><svg>',
+    'template': '<svg><script>var json = {{"status": "ok", "data": "{}"}};</script><svg>',
     'vulnerable': True,
     'context': 'single_reflect_triple_escape',
     'filter_script': True,
