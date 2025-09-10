@@ -204,18 +204,7 @@ questions = [
     'context': 'no_parentheses',
     'filter_script': True,
     'blocked_keywords': ['(', ')','`']
-},
-    {
-    'id': 21,  
-    'title': '外部名前空間',
-    'description': '外部名前空間とは。',
-    'template': '<svg><script>var json = {{"status": "ok", "data": "{}"}};</script><svg>',
-    'vulnerable': True,
-    'context': 'single_reflect_triple_escape',
-    'filter_script': True,
-    'sanitize_single_quote': True
 }
-
 ]
 
 def sanitize_for_event_attr(value):
