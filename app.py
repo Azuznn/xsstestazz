@@ -183,7 +183,7 @@ questions = [
         'vulnerable': True,
         'context': 'html_autoclose_iframe',
         'filter_script': True,
-        'blocked_keywords': ['>', '¥', 'java', 'script', 'alert', 'prompt', 'confirm', 'console.log','\']
+        'blocked_keywords': ['>', '¥', 'java', 'script', 'alert', 'prompt', 'confirm', 'console.log','\\']
     },
     {
         'id': 19,
